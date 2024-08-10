@@ -37,7 +37,7 @@ Product.create = ( productData , callback ) => {
 }
 
 Product.update = (productData, id, callback) => {
-    
+    console.log(productData);
     let updateProductData = {
         "product_name" : productData.product_name,
         "product_description" : productData.product_description,
@@ -54,6 +54,19 @@ Product.update = (productData, id, callback) => {
         }
     });
 
+}
+
+Product.getProductsById = (id, callback ) => {
+    console.log(id);
+    let dbQry = "SELECT id,product_name,product_description,product_price FROM products WHERE id=?";
+    db.query(dbQry,[id], (err,result) => {
+
+        if(err){
+            return callback(err,null);
+        }else{
+            return callback(null,result[0])
+        }
+    })
 }
 
 Product.delete = (id,callback) => {

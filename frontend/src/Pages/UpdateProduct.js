@@ -1,45 +1,59 @@
 import axios from 'axios';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 
-const AddProduct = () => {
+const UpdateProduct = () => {
+    const { id } = useParams(); 
+    const navigate = useNavigate();
+    const [formData,setFormData] = useState({
+        product_name:'',
+        product_description:'',
+        product_price:''
+      });
 
-  const [formData,setFormData] = useState({
-    product_name:'',
-    product_description:'',
-    product_price:''
-  });
+    useEffect(() => {
+        getProductData(id)
+    },[])
 
-  const handleFormData = (e) => {
-    const { name , value } = e.target;
-
-    setFormData({
-      ...formData,
-      [name] : value
-    })
-
-  }
-
-  const handleSubmit = async (e) => {
-
-    e.preventDefault();
+    const handleFormData = (e) => {
+        const { name , value } = e.target;
     
-    try{
-      const response = await axios.post("http://localhost:3001/products/add",formData);
-      setFormData({ product_name: '', product_description: '' , product_price : '' });
-      alert(response.data.success)
-    }catch(err){
-      alert(err.response.data.error);
+        setFormData({
+          ...formData,
+          [name] : value
+        })
+    
+      }
+
+    const handleSubmit = async (e) => {
+
+        e.preventDefault();
+       const response = await axios.put(`http://localhost:3001/products/update/${id}`,formData).
+       then( response => {
+        alert("Prodcut has been updated");
+        navigate("/");
+       }).
+       catch( error => {
+        alert(error)
+       })
     }
 
-  }
+    const getProductData = async (id) => {
+       await axios.get(`http://localhost:3001/products/edit/${id}`).
+       then( response => {
+        setFormData(response.data) 
+       }).catch ( error => {
+        alert(error)
+       })
+    }
 
-  return (
-    <>
-      <div className='section' style={{ "marginTop": "50px" }}>
+    return (
+        <>
+        <div className='section' style={{ "marginTop": "50px" }}>
         <div className='container mt-20'>
           <div className='row'>
             <div className='col-md-12'>
-              <h4 className='head'>Add New Product</h4>
+              <h4 className='head'>Update Product</h4>
             </div>
           </div>
           <div className='row' style={{"marginTop" : "35px"}}>
@@ -65,8 +79,9 @@ const AddProduct = () => {
           </div>
         </div>
       </div>
-    </>
-  )
+        </>
+
+    )
 }
 
-export default AddProduct
+export default UpdateProduct

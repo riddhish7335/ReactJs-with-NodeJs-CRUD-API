@@ -19,6 +19,20 @@ exports.getAllProducts = (req,res) => {
 }
 
 exports.createProduct = (req,res) => {
+    const { product_name , product_description , product_price} = req.body;
+
+    
+    if(product_name == ""){
+        return res.status(400).json({ error: 'Enter product name.' });
+    }
+
+    if(product_description == ""){
+        return res.status(400).json({ error: 'Enter product description.' });
+    }
+
+    if(product_price == ""){
+        return res.status(400).json({ error: 'Enter product price.' });
+    }
 
     const inserData = {
         "product_name" : req.body.product_name,
@@ -28,19 +42,21 @@ exports.createProduct = (req,res) => {
 
     Product.create(inserData, (err , results) => {
         if(err){
-            let resData = {
-                status:0,
-                message:err,
-                data:null
-            }
-            res.json(resData);
+            res.status(500).json({ error: 'Oops, Something went wrong!' });
         }else{
-            let resData = {
-                status:1,
-                message:"Product has been added successfully!",
-                data:null
-            }
-            res.json(resData);
+            res.status(200).json({ success: 'Product has been added success' });            
+        }
+    })
+
+}
+
+exports.getProductsById = ( req, res) => {
+    let id = req.params.id;
+    Product.getProductsById(id, (err,results) => {
+        if(err){
+            return res.status(400).json({ error: 'Invalid id' });
+        }else{
+            return res.status(200).json(results);
         }
     })
 

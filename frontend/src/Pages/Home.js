@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom';
 
 const Home = () => {
 
@@ -19,6 +20,18 @@ const Home = () => {
             setError(err);
         }
         
+    }
+
+    const deleteProduct = async (id) => {
+
+        await axios.delete(`http://localhost:3001/products/delete/${id}`).
+        then(response => {
+            setProducts(products.filter(item => item.id !== id));
+        }).
+        catch(error => {
+            alert(error)
+        })
+
     }
     
     return (
@@ -51,9 +64,9 @@ const Home = () => {
                                                 <td>{product.product_description}</td>
                                                 <td className='text-right'>$ {product.product_price.toFixed(2)}</td>
                                                 <td className='text-center'>
-                                                    <button className='btn btn-success btn-sm'>Edit</button>
+                                                    <Link to={`/product/edit/${product.id}`} className='btn btn-success btn-sm'>Edit</Link>
                                                     &nbsp;&nbsp;
-                                                    <button className='btn btn-danger btn-sm'>Delete</button>
+                                                    <button className='btn btn-danger btn-sm' onClick={ () => deleteProduct(product.id) }>Delete</button>
                                                 </td>
                                             </tr>
                                         ))
